@@ -36,7 +36,7 @@ Serial1.begin(9600); // connect gps sensor
 void loop() {
   
   while(Serial1.available()){
-    if (gps.encode(Serial1.read()))
+    if (gps.encode(Serial1.read())) // so if GPS work only ,If not then I wont spam The Eror things
     LoRa.beginPacket();
     LoRa.print("This HSSRB SAT");
     LoRa.print("Lat: ");
