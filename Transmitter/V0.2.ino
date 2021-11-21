@@ -20,7 +20,7 @@ void setup() {
 LoRa.setPins(LORA_SS, LORA_RST, LORA_DIO0);  
 Serial.begin(57600); // connect serial
 Serial.println("The GPS Received Signal:");
-Serial1.begin(9600); // connect gps sensor
+Serial2.begin(9600); // connect gps sensor
   Serial.println("LoRa Sender");
 
   if (!LoRa.begin(433E6)) {
@@ -35,8 +35,8 @@ Serial1.begin(9600); // connect gps sensor
 
 void loop() {
   
-  while(Serial1.available()){
-    if (gps.encode(Serial1.read())) // so if GPS work only ,If not then I wont spam The Eror things
+  while(Serial2.available()){
+    if (gps.encode(Serial1.read())){
     LoRa.beginPacket();
     LoRa.print("This HSSRB SAT");
     LoRa.print("Lat: ");
@@ -69,9 +69,8 @@ void loop() {
     Serial.println(gps.date.value());
     Serial.println(gps.satellites.value());
     Serial.println("Sent via LoRa");
-    
-    
-    
+  }
+    else Serial.println ("GPS EROR,Chek Wiring");}
     
     
     
@@ -84,5 +83,3 @@ void loop() {
     delay(2000);
 
   }
-
-}
