@@ -1,0 +1,77 @@
+#include <SPI.h>
+#include <LoRa.h>
+#include <TinyGPS++.h>
+#include <SoftwareSerial.h>
+
+#define LORA_SS 53
+#define LORA_RST 9
+#define LORA_DIO0 48 
+
+
+// Choose two Arduino pins to use for software serial
+int RXPin = 19;
+int TXPin = 18;   
+
+// Create a TinyGPS++ object
+TinyGPSPlus gps;
+
+SoftwareSerial gpsSerial(RXPin, TXPin);
+
+void setup() {
+    //digitalWrite(22, LOW);//start state
+    //digitalWrite(23, LOW);//start state FOR ONLY E19 EBYTE
+LoRa.setPins(LORA_SS, LORA_RST, LORA_DIO0);  
+LoRa.setSPIFrequency(8E6);  //This call is optional and only needs to be used if you need to change the default SPI frequency used. Some logic level converters cannot support high speeds such as 8 MHz
+Serial.begin(9600); // connect serial
+Serial2.begin(9600); // connect gps sensor
+Serial.println("LoRa Sender Started");
+  if (!LoRa.begin(433E6)) {
+    Serial.println("Starting LoRa failed!");
+    while (1);
+  }
+  LoRa.begin(433E6);// set Freq
+  LoRa.setTxPower(30);//1-30 dBm
+  
+  
+
+}
+
+void loop() {
+  
+    //digitalWrite(22, HIGH);//TXpin
+    //digitalWrite(23, LOW);//RXpin
+    LoRa.beginPacket();
+    LoRa.print("HSSRB Test SAT");
+    LoRa.print("Lat: ");
+    LoRa.print(gps.location.lat(), 6);
+    LoRa.print("c");
+    LoRa.print("Long: ");
+    LoRa.print(gps.location.lng(), 6);
+    LoRa.print("c");
+    LoRa.print(gps.speed.kmph());
+    LoRa.print("Speed Km/H");
+    LoRa.print("c");
+    LoRa.print(gps.altitude.meters());
+    LoRa.print("Altitude M");
+    LoRa.print(gps.time.minute()); // Raw time in HHMMSSCC format (u32)
+    LoRa.print(gps.date.value());
+//    Serial.println("Sent via LoRa"); // FOR DEBUG
+//    Serial.println("This HSSRB SAT");
+//    Serial.print("Lat: ");
+//    Serial.print(gps.location.lat(), 6);
+//    Serial.print("c");
+//    Serial.print("Long: ");
+//    Serial.print(gps.location.lng(), 6);
+//    Serial.print("c");
+//    Serial.print(gps.speed.kmph());
+//    Serial.print("Speed Km/H");
+//    Serial.print("c");
+//    Serial.print(gps.altitude.meters());
+//    Serial.print("Altitude M");
+//    Serial.print(gps.time.minute()); // Raw time in HHMMSSCC format (u32)
+//    Serial.print(gps.date.value());
+//    Serial.print(gps.satellites.value());
+    Serial.println("Sended");
+    LoRa.endPacket();
+    delay(1000);
+  }   
